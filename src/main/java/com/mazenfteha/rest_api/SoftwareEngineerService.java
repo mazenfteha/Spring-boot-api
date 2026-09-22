@@ -25,7 +25,10 @@ public class SoftwareEngineerService {
     }
 
     public SoftwareEngineer getSoftwareEngineerById(Integer id) {
-        return softwareEngineerRepository.findById(id).orElse(null);
+        return softwareEngineerRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Software engineer not found")
+                );
     }
 
     public SoftwareEngineer updateSoftwareEngineer(Integer id, String name, String techStack) {

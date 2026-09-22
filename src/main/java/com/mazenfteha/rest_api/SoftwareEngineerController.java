@@ -1,5 +1,7 @@
 package com.mazenfteha.rest_api;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import jakarta.validation.Valid;
 
 import com.mazenfteha.rest_api.dto.CreateSoftwareEngineerRequest;
+import com.mazenfteha.rest_api.dto.SoftwareEngineerResponse;
 import com.mazenfteha.rest_api.dto.UpdateSoftwareEngineerRequest;
 
 @RestController
@@ -27,31 +30,44 @@ public class SoftwareEngineerController {
     }
 
     @GetMapping()
-    public List<SoftwareEngineer> getAllSoftwareEngineers() {
-        return softwareEngineerService.getAllSoftwareEngineers();
+    public List<SoftwareEngineerResponse> getAllSoftwareEngineers() {
+        return softwareEngineerService.getAllSoftwareEngineers()
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
     }
 
     @PostMapping()
-    public SoftwareEngineer createSoftwareEngineer(@Valid @RequestBody CreateSoftwareEngineerRequest request) {
-        return softwareEngineerService.createSoftwareEngineer(null, request.name(), request.techStack());
+    public SoftwareEngineerResponse createSoftwareEngineer(@Valid @RequestBody CreateSoftwareEngineerRequest request) {
+        SoftwareEngineer softwareEngineer = softwareEngineerService.createSoftwareEngineer(null, request.name(),
+                request.techStack());
+        return toResponse(softwareEngineer);
     }
 
     @GetMapping("/{id}")
-    public SoftwareEngineer getSoftwareEngineerById(@PathVariable Integer id) {
-        return softwareEngineerService.getSoftwareEngineerById(id);
+    public SoftwareEngineerResponse getSoftwareEngineerById(@PathVariable Integer id) {
+        return toResponse(softwareEngineerService.getSoftwareEngineerById(id));
     }
 
     @PutMapping("/{id}")
-    public SoftwareEngineer updateSoftwareEngineer(@PathVariable Integer id,
+    public SoftwareEngineerResponse updateSoftwareEngineer(@PathVariable Integer id,
             @Valid @RequestBody UpdateSoftwareEngineerRequest request) {
-        return softwareEngineerService.updateSoftwareEngineer(id, request.name(),
+        SoftwareEngineer softwareEngineer = softwareEngineerService.updateSoftwareEngineer(id, request.name(),
                 request.techStack());
+        return toResponse(softwareEngineer);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSoftwareEngineer(@PathVariable Integer id) {
         softwareEngineerService.deleteSoftwareEngineer(id);
         return ResponseEntity.noContent().build();
+    }
+
+    private SoftwareEngineerResponse toResponse(SoftwareEngineer softwareEngineer) {
+        return new SoftwareEngineerResponse(
+                softwareEngineer.getId(),
+                softwareEngineer.getName(),
+                softwareEngineer.getTechStack());
     }
 
 }
