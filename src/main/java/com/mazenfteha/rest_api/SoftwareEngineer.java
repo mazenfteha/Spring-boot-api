@@ -4,13 +4,20 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 public class SoftwareEngineer {
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @NotBlank(message = "Name is required")
+    @Size(max = 100, message = "Name must not exceed 100 characters")
     private String name;
+
+    @NotBlank(message = "Tech stack is required")
+    @Size(max = 255, message = "Tech stack must not exceed 255 characters")
     private String techStack;
 
     protected SoftwareEngineer() {}
