@@ -34,4 +34,26 @@ public class ProjectService {
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
     }
 
+    public Project updateProject(Integer id, String name, String description, Integer softwareEngineerId) {
+        Project project = projectRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
+
+        SoftwareEngineer softwareEngineer = softwareEngineerRepository.findById(softwareEngineerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Software engineer not found"));
+
+        project.setName(name);
+        project.setDescription(description);
+        project.setSoftwareEngineer(softwareEngineer);
+
+        return projectRepository.save(project);
+    }
+
+    public void deleteProject( Integer id) {
+        if (!projectRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Project not found");
+        }
+
+        projectRepository.deleteById(id);
+    }
+
 }

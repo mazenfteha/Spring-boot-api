@@ -18,6 +18,13 @@ import jakarta.validation.Valid;
 import com.mazenfteha.rest_api.dto.CreateSoftwareEngineerRequest;
 import com.mazenfteha.rest_api.dto.SoftwareEngineerResponse;
 import com.mazenfteha.rest_api.dto.UpdateSoftwareEngineerRequest;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @RestController
 @RequestMapping("api/v1/software-engineers")
@@ -37,6 +44,7 @@ public class SoftwareEngineerController {
                 .collect(Collectors.toList());
     }
 
+    @ResponseStatus (HttpStatus.CREATED)
     @PostMapping()
     public SoftwareEngineerResponse createSoftwareEngineer(@Valid @RequestBody CreateSoftwareEngineerRequest request) {
         SoftwareEngineer softwareEngineer = softwareEngineerService.createSoftwareEngineer(null, request.name(),
@@ -61,6 +69,16 @@ public class SoftwareEngineerController {
     public ResponseEntity<Void> deleteSoftwareEngineer(@PathVariable Integer id) {
         softwareEngineerService.deleteSoftwareEngineer(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("all")
+    public Page<SoftwareEngineerResponse> getAllSoftwareEngineers(
+            @RequestParam(required = false) String name,
+            @PageableDefault(size = 10, sort = "name") Pageable pageable) {
+
+        return softwareEngineerService
+                .searchSoftwareEngineers(name, pageable)
+                .map(this::toResponse);
     }
 
     private SoftwareEngineerResponse toResponse(SoftwareEngineer softwareEngineer) {

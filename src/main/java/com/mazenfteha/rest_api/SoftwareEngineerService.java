@@ -2,6 +2,8 @@ package com.mazenfteha.rest_api;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
@@ -48,6 +50,13 @@ public class SoftwareEngineerService {
         }
 
         softwareEngineerRepository.deleteById(id);
+    }
+
+    public Page<SoftwareEngineer> searchSoftwareEngineers(String name, Pageable pageable) {
+        if (name == null || name.isEmpty()) { 
+            return softwareEngineerRepository.findAll(pageable);
+        }
+        return softwareEngineerRepository.findByNameContainingIgnoreCase(name, pageable);
     }
 
 }
