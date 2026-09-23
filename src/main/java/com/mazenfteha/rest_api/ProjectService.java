@@ -2,6 +2,8 @@ package com.mazenfteha.rest_api;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.mazenfteha.rest_api.exception.ResourceNotFoundException;
@@ -55,5 +57,14 @@ public class ProjectService {
 
         projectRepository.deleteById(id);
     }
+
+    public Page<Project> searchProjects(Integer softwareEngineerId, Pageable pageable) {
+        if (softwareEngineerId != null) {
+            return projectRepository.findBySoftwareEngineerId(softwareEngineerId, pageable);
+        } else {
+            return projectRepository.findAll(pageable);
+        }
+    }
+    
 
 }

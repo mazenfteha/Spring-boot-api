@@ -23,6 +23,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.PutMapping;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @RestController
@@ -65,6 +70,16 @@ public class ProjectController {
     public ResponseEntity<Void> deleteProject(@PathVariable Integer id) {
         projectService.deleteProject(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/search")
+    public Page<ProjectResponse> getAllPrjects(
+        @RequestParam(required = false) Integer softwareEngineerId,
+        @PageableDefault(size = 10, sort = "name")
+        Pageable pageable
+    ){
+        return projectService.searchProjects(softwareEngineerId, pageable)
+            .map(this::toResponse);
     }
 
     private ProjectResponse toResponse(Project project) {
